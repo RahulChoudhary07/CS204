@@ -134,7 +134,7 @@ int main()
             long long int x,y;
             cin>>x>>y;
             AddFirst(x,y);
-        }
+	}
         else if(a==2){DelFirst();}
         else if(a==3)
         {
