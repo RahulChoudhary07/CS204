@@ -1,7 +1,11 @@
 #include <iostream> 
+#include <vector>
+#include <utility> 
+
+
 using namespace std;
 
-struct Node* head = NULL;
+
 
 struct Node  
 {  
@@ -9,6 +13,8 @@ struct Node
     long long int x;  
     Node *next;  
 }; 
+
+struct Node* head = NULL;
 
 void AddFirst(long long int x , long long int y) 
 { 
@@ -25,7 +31,7 @@ void AddFirst(long long int x , long long int y)
 void DelFirst() 
 { 
     if (head == NULL) 
-        {cout<<"empty linked list";return ;} 
+        {cout<<-1<<endl;return ;} 
 
     Node* temp = head; 
     head = head->next; 
@@ -38,7 +44,7 @@ void Del( long long int x,long long int y)
 { 
    
    if (head == NULL) 
-      {cout<<"empty linked list";return ;} 
+      {cout<<-1<<endl;return ;} 
   
     
    struct Node* temp = head; 
@@ -47,7 +53,7 @@ void Del( long long int x,long long int y)
     if ((head->x)==x&&(head->y)==y) 
     { 
         head = temp->next;    
-        free(temp);              
+        free(temp); 
         return; 
     } 
   
@@ -63,28 +69,32 @@ void Del( long long int x,long long int y)
          }
 
     if (temp == NULL ) 
-      {cout<<"-1"<<endl;return ;} 
+      {cout<<-1<<endl;return ;} 
   
     
     struct Node *next = temp->next; 
   
     
-    free(temp);  
+    free(temp);   
   
-    prev->next = next; 
-    cout<<"1"<<endl;return ; 
+    prev->next = next;  
+	return ;
 } 
 
 void Search(float d) 
 { 
     struct Node* temp = head; 
-    while (temp!= NULL) { 
+	long long int p = 0;
+    while (temp!= NULL) 
+    { 
         if((temp->x)*(temp->x)+(temp->y)*(temp->y)<=d*d)
         {
-            cout<<"("<<(temp->x)<<","<<(temp->y)<<")";
+		p++;
         }
         temp=temp->next;
     } 
+	if(p==0){cout<<-1;return;}
+	else{cout<<p;return;}
 } 
 
 bool Search(long long int x,long long int y) 
@@ -110,8 +120,9 @@ long long int Length()
     } 
     return l;
 }
- int main()
+int main()
 {
+ 
     long long int t;
     cin>>t;
     while(t--)
@@ -133,7 +144,7 @@ long long int Length()
         }
         else if(a==4)
         {
-            long long int d;
+            float d;
             cin>>d;
             Search(d);
             cout<<endl;
@@ -143,7 +154,9 @@ long long int Length()
         {
             long long int x,y;
             cin>>x>>y;
-            cout<<Search(x,y)<<endl;
+		if(Search(x,y)){cout<<"True";}
+		else{cout<<"False";}
+            cout<<endl;
         }
         else if(a==6)
         {
@@ -151,4 +164,3 @@ long long int Length()
         }
     }
 }
-    
