@@ -1,226 +1,296 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
+#include <stdlib.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#define pb push_back
+#define IOS ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
+#define ll long long
+#define ull unsigned long long
+#define vi vector<int>
+#define vll vector<long long>
+#define vvi vector<vi>
+#define ii pair<int,int>
+#define pll pair<ll,ll>
+#define vii vector<ii>
+#define vpll vector<pll>
+#define all(a) a.begin(),a.end()
+#define INF LLONG_MAX
+
+#define o_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
+#define o_setll tree<ll, null_type,less<ll>, rb_tree_tag,tree_order_statistics_node_update>
+//member functions :
+//1. order_of_key(k) : number of elements strictly lesser than k
+//2. find_by_order(k) : k-th element in the set
 
 using namespace std;
+using namespace __gnu_pbds;
 
-struct treenode
+map<string,ll> mp;
+map<string,ll>::iterator it;
+
+ll pow(ll base,ll power)
 {
-    int i;
-    treenode* left,* right,* parent;
-};
-
-int prec(char c)
-{
-    if(c == '^')
-    return 3;
-    else if(c == '*' || c == '/')
-    return 2;
-    else if(c == '+' || c == '-')
-    return 1;
-    else
-    return -1;
-}
-
-bool ischar(char a)
-{
-    if(a=='+'||a=='-'||a=='*'||a=='/'||a=='^'){
-    return true;}
-
-    return false;
-}
-
-int mapo(char c)
-{
-    switch(c)
-    {
-        case '+': return -1;
-        case '-': return -2;
-        case '*': return -3;
-        case '/': return -4;
-        case '^': return -5;
-    }
-}
-
-stack<int> postfix(char *s)
-{
-    stack<int> S,O;
-    int f=0,a;
-    O.push('N');
-    for(int i=0;i<strlen(s);i++)
-    {
-        if(s[i]>='0'&&s[i]<='9')
-        {
-            if(f)
-            {
-                a=S.top();
-                S.pop();
-                S.push(a*10+s[i]-'0');
-            }
-            else
-            {
-                S.push(s[i]-'0');
-                f=1;
-            }
-        }
-
-        else
-        {
-            f=0;
-            if(s[i]=='(')
-                O.push('(');
-            else if(s[i]==')')
-            {
-                while(O.top()!='N'&&O.top()!='(')
-                {
-                    char c=O.top();
-                    O.pop();
-                    S.push(mapo(c));
-                }
-                if(O.top()=='(')
-                    O.pop();
-            }
-            else if(ischar(s[i]))
-            {
-                while(O.top()!='N'&&O.top()!='('&&prec(s[i])<=prec(O.top()))
-                {
-                    char c=O.top();
-                    O.pop();
-                    S.push(mapo(c));
-                }
-                O.push(s[i]);
-            }
-        }
-    }
-    while(O.top()!='N')
-        {
-            char c=O.top();
-            O.pop();
-            S.push(mapo(c));
-        }
-    return S;
-}
-
-treenode * newNode(int v)
-{
-    treenode * temp=new treenode;
-    temp->left = NULL;
-    temp->right = NULL;
-    temp->i = v;
-    return temp;
-}
-
-treenode * etree(stack<int> s)
-{
-    treenode *t,*t1,*t2;
-    
-    stack<treenode *> st;
-    while(!s.empty())
-    {
-        if(s.top()>=0)
-        {
-            t=newNode(s.top());
-            s.pop();
-            st.push(t);
-        }
-        else
-        {
-            t=newNode(s.top());
-            t1=st.top();
-            st.pop();
-            t2=st.top();
-            st.pop();
-
-            t->right=t1;
-            t->left=t2;
-
-            st.push(t);
-            s.pop();
-        }
-    }
-    return t;
-}
-
-
-void show(stack<int> s)
-{
-    while(!s.empty())
-    {
-        int a=s.top();
-        s.pop();
-        cout<<a<<endl;
-    }
-}
-
-void printInorder(struct treenode* node)
-{
-    if (node == NULL)
-        return;
-
-    
-    printInorder(node->left);
-
-   
-    cout << node->i << " ";
-
-    
-    printInorder(node->right);
-}
-
-
-
-
-int eval(treenode* root)
-{
-    if (!root)
+    if(power<0)
         return 0;
+	ll res=1;
+	for(int i=0;i<power;i++)
+		res*=base;
+	return res;
+}
+struct et 
+{ 
+    string value; 
+    et* left, *right; 
+}; 
 
-    
-    if (!root->left && !root->right)
-        return root->i;
-
-    
-    int l_val = eval(root->left);
-
-    
-    int r_val = eval(root->right);
-
-    
-    if (root->i==-1)
-        return l_val+r_val;
-
-    if (root->i==-2)
-        return l_val-r_val;
-
-    if (root->i==-3)
-        return l_val*r_val;
-
-    if(root->i==-4)
-        return l_val/r_val;
-    return pow(l_val,r_val);
+bool isOperator(string c) 
+{ 
+   	 if (c == "+" || c == "-" || 
+            c == "*" || c == "/" || 
+            c == "^") 
+       	 return 1; 
+    	 return 0; 
+} 
+et* newNode(string v) 
+{ 
+    et *temp = new et; 
+    temp->left = temp->right = NULL; 
+    temp->value = v; 
+    return temp; 
 }
 
+int precedance(string c) 
+{ 
+    if(c == "^") 
+    return 3; 
+    else if(c == "*" || c == "/") 
+    return 2; 
+    else if(c == "+" || c == "-") 
+    return 1; 
+    else
+    return -1; 
+} 
 
-int main()
+vector <string> infixToPostfix(vector <string> str)
 {
-   
-        int T;
-        cin>>T;
-        while(T--)
+    stack <string> man;
+    man.push("END");
+    vector <string> operation;
+    for(int i = 0; i < str.size(); i++)
+    {
+        
+        if(str[i]!="("&&str[i]!=")"&&str[i]!="*"&&str[i]!="^"&&str[i]!="-"&&str[i]!="+"&&str[i]!="/")
+        operation.push_back(str[i]);
+ 
+        
+        else if(str[i] == "(")
+         
+        man.push("(");
+         
+
+        else if(str[i] == ")")
         {
-            char s[100000];
-            cin>>s;
-           
-            stack <int> S,s1;
-            S=postfix(s);
-            while(!S.empty())
+            while(man.top() != "END"&& man.top() != "(")
             {
-                s1.push(S.top());
-                S.pop();
+                string s = man.top();
+                man.pop();
+               operation.push_back(s);
             }
-            
-            treenode *p=etree(s1);
-            
-            cout<<eval(p)<<endl;
-           
+            if(man.top() == "(")
+            {
+                string s = man.top();
+                man.pop();  
+            }
         }
+         
+        
+        else{
+	
+            while(man.top() != "END" && precedance(str[i]) <= precedance(man.top()))
+            {
+		    if(precedance(str[i])==3 && precedance(man.top())==3)break;
+                string s = man.top();
+                man.pop();
+                operation.push_back(s);
+            }
+            man.push(str[i]);
+        }
+ 
+    }
     
+    while(man.top() != "END")
+    {
+        string s = man.top();
+        man.pop();
+        operation.push_back(s);
+    }
+     
+    return operation;
+}
+
+int toInt(string s)  
+{  
+
+ int integer=stoi(s);
+      
+    return integer;  
+}  
+
+et* constructTree(vector <string> postfix) 
+{ 
+    stack<et *> st; 
+    et *t, *t1, *t2; 
+  
+    
+
+    for (int i=0; i<postfix.size(); i++) 
+    { 
+        
+ 
+        if (isOperator(postfix[i])==0) 
+        { 
+            t = newNode(postfix[i]); 
+            st.push(t); 
+        } 
+        else 
+
+        { 
+            t = newNode(postfix[i]); 
+              t1 = st.top(); 
+
+            st.pop();     
+ 
+            t2 = st.top(); 
+            st.pop(); 
+  
+            
+            t->right = t1; 
+            t->left = t2; 
+  
+            
+            st.push(t); 
+        } 
+    } 
+  
+     
+    t = st.top(); 
+    st.pop(); 
+  
+    return t; 
+} 
+
+int eval(et* root)  
+{  
+      
+    if (!root)  
+        return 0;  
+  
+     
+    if (!root->left && !root->right)  
+        return toInt(root->value);  
+  
+     
+    int l_val = eval(root->left);  
+  
+      
+    int r_val = eval(root->right);  
+  
+     
+    if (root->value=="+")  
+        return l_val+r_val;  
+  
+    if (root->value=="-")  
+        return l_val-r_val;  
+  
+    if (root->value=="*")  
+        return l_val*r_val;  
+    if(root->value=="/")
+	    return l_val/r_val;
+	if(root->value=="^")
+		return pow(l_val,r_val);
+	return -1;
+}  
+
+int main(){
+   long long int t;
+   cin>>t;
+    while(t--){
+    	long long int n;
+    	cin>>n;
+    	while(n--){
+        int check=1;
+    string s;
+    cin>>s;
+    vector <string> v;
+    int c=0;
+    int close=0;
+    for(int i=0;i<s.length();i++){
+        if(s[i]=='('||s[i]==')'||s[i]=='*'||s[i]=='^'||s[i]=='-'||s[i]=='+'||s[i]=='/'){
+           
+            string res;
+            res+=s[i];
+            if(i==0&&s[i]=='-'){
+                close++;
+                v.push_back("(");
+                v.push_back("0");
+               
+            }
+           
+            if(i!=0&&(s[i]=='-'&&c==1)){
+                close++;
+                v.push_back("(");
+                v.push_back("0");
+            }
+           
+            if(s[i]!=')')c=1;
+            v.push_back(res);
+        }
+        else if((s[i]>='a'&&s[i]<='z')||(s[i]>='A'&&s[i]<='Z')){
+            string res;
+            while((s[i]>='a'&&s[i]<='z')||(s[i]>='A'&&s[i]<='Z')&&i<s.length()){
+               
+                res+=s[i];
+                i++;
+            }
+            i--;
+            v.push_back(res);
+        }
+        else{
+            c=0;
+            string res;
+            while(s[i]>='0'&&s[i]<='9'&&i<s.length()){
+               
+                res+=s[i];
+                i++;
+            }
+            i--;
+            v.push_back(res);
+            while(close!=0){
+                v.push_back(")");
+                close--;
+            }
+        }
+       
+    }
+    while(close!=0){
+                v.push_back(")");
+                close--;
+            }
+   
+    if(check){
+    vector <string> abc=infixToPostfix(v);
+    et*t = constructTree(abc);
+
+	
+	cout<<eval(t)<<endl;
+}
+else{
+	cout<<"NOT VALID"<<endl;
+}
+}
+
+	
+	return 0;
+	
+}
 }
