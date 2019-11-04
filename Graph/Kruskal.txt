@@ -96,9 +96,16 @@ int main()
     }
     sort(edges,edges+e,comapre);
     mstkruskal(edges,e,mst,v);
+    ll cost=0;
+    for(ll i=0;i<mst.size();i++)
+    {
+       cost+=mst[i].w;
+    }
+    cout<<"total cost- "<<cost<<endl;
     for(ll i=0;i<mst.size();i++)
     {
         cout<<mst[i].x<<" "<<mst[i].y<<" "<<mst[i].w<<endl;
     }
+    
     return 0;
 }
