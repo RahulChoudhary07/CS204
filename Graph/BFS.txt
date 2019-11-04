@@ -8,17 +8,18 @@ using namespace std;
 
 void bfs(vector<ll>* adjlist, ll n)
 {
-    queue<ll> q;
-    // starting vertex 0
-    q.push(0);
+    
     int visited[n] = {0};
-    visited[0] = 1;
+   
     
     for(ll j=0;j<n;j++)
     {
         
         if(!visited[j])
-        {
+        {   queue<ll> q;
+            // starting vertex j
+            q.push(j);
+            visited[j] = 1;
             while(!q.empty())
             {
                 ll cv = q.front();
