@@ -1,88 +1,81 @@
-#include<bits/stdc++.h>
+/*
+                      *********************************** DIS-JOINT SET UNION FIND ****************************
+    Given n people (numbered 0 to n-1) and next you are given some pair of people (u) who are friends of each other.
+    Rule:: If 1 and 2 are friends and 2 and 3 are friends, implies 1 and 3 to be friends
+    You are given some queries(q) of pair of people,
+                       For each query,
+                                        print YES if they are friends
+                                        else print NO.
+*/
+
+
+#include <bits/stdc++.h>
 using namespace std;
-struct Edge
-{
-    int src,dest;
-};
+typedef long long int lli;
 
-struct Graph
-{
-    int V;
-    int E;
-    struct Edge *edge;
 
-};
+ lli n;
+ unordered_map<lli,lli> parent;
+ unordered_map<lli,lli> Rank;
 
-struct subset
-{
-    int parent;
-    int rank;
-};
-
-struct Graph* createGraph(int V,int E)
-{
-    struct Graph* graph=(struct Graph*)malloc(sizeof(struct Graph));
-    graph->V=V;
-    graph->E=E;
-    graph->edge=(struct Edge*)malloc(sizeof(struct Edge));
-    return graph;
-
+void makeset(){
+    for(lli i=0;i<n;i++){
+        parent[i]=i;
+    }
 }
 
-int find(struct subset subsets[],int x)
-{
-    if(subsets[x].parent==x)return x;
-    subsets[x].parent=find(subsets,subsets[x].parent);
-    return subsets[x].parent;
+lli find(lli i){                            // find by path-compression
+    if(parent[i]!=i){
+        parent[i]=find(parent[i]);
+    }
+    return parent[i];
 }
 
-void Union(struct subset subsets[],int x,int y)
-{
-    int set1=find(subsets,x);
-    int set2=find(subsets,y);
-    if(subsets[set1].rank>subsets[set2].rank)
-    {
-        subsets[set2].parent=set1;
-    }
 
-    else if(subsets[set1].rank<subsets[set2].rank)
-    {
-        subsets[set1].parent=set2;
+void Union(lli i,lli j){                    //union by rank
+    lli irep=find(i),irank,jrank;
+    lli jrep=find(j);
+    if(irep==jrep){
+        return;
+    }else{
+         irank = Rank[irep];
+         jrank = Rank[jrep];
+        if(irank>jrank){
+            parent[jrep]=irep;
+        }else if(jrank>irank){
+            parent[irep]=jrep;
+        }else{
+            parent[jrep]=irep;
+            Rank[irep]++;
+        }
     }
-    else
-    {
-        subsets[set1].parent=set2;
-        subsets[set2].rank++;
-    }
-
 }
 
-int isCycle(struct Graph* graph)
-{
-    struct subset subsets[graph->V];
-    for(int i=0;i<graph->V;i++)
-    {
-        subsets[i].parent=i;
-        subsets[i].rank=0;
-    }
-    for(int i =0;i<graph->E;i++)
-    {
-        int x=find(subsets,graph->edge[i].src);
-        int y=find(subsets,graph->edge[i].dest);
-        if(x==y)return 1;
-        Union(subsets,x,y);
-    }
-    return 0;
-}
 
-int main()
-{
-    int v=5,e=4;
-    struct Graph* graph=createGraph(5,4);
-    graph->edge[0]={0,1};
-    graph->edge[1]={1,2};
-    graph->edge[2]={2,3};
-    graph->edge[3]={3,1};
-    if(isCycle(graph))cout<<"YES";
-    else cout<<"NO";
+int main() {
+   
+    cin >> n;
+   
+    makeset();                   //initializing each number as a set i.e. making all as representatives
+    lli u;
+    cin >>u;                     // number of unions
+    while(u--){
+        lli a,b;
+        cin >>a>>b;
+        Union(a,b);              //union by rank
+    }
+    lli q;
+    cin >>q;                     // No. of Queries
+    while(q--){
+        lli e,r;
+        cin >>e>>r;
+        if(find(e)==find(r)){    // if representatives same then same group
+            cout << "YES\n";
+        }else{
+            cout <<"NO\n";
+        }
+    }
+
+
+	return 0;
 }
