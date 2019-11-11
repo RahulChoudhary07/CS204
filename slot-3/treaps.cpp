@@ -147,6 +147,16 @@ void inorder(treapnode* root)
     }
 
 }
+void postorder(treapnode* root)
+{
+    if(root)
+    {
+        postorder(root->left);
+        postorder(root->right);
+        cout << "k-"<<root->key <<" p-"<< root->priority<<endl;
+    }
+}
+
 int main()
 {
     srand(time(NULL));
@@ -161,6 +171,7 @@ int main()
     root = Insert(root, 10);
 
     inorder(root);
+    postorder(root);
 
     root = Delete(root, 20);
     cout<<endl<<"After Deleting 20"<<endl<<endl;
@@ -169,6 +180,7 @@ int main()
 
     treapnode *temp = Search(root, 50);
     (temp == NULL)? cout <<endl<< "50 Not Found ":  cout << endl<<"50 found";
+    
 
 
     return 0;
