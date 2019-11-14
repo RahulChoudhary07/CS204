@@ -53,6 +53,7 @@ int main()
             cout<<"Enter the number to be inserted : ";
 	    cin>>temp->info;
             bst.insert(root, temp);
+	    break;
         case 2:
             if (root == NULL)
             {
